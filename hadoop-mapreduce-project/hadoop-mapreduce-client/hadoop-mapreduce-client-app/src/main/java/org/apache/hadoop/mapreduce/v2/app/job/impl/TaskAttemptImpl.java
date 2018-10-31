@@ -547,6 +547,8 @@ public abstract class TaskAttemptImpl implements
     this.resourceCapability.setVirtualCores(
         getCpuRequired(conf, taskId.getTaskType()));
 
+    LOG.info("-------------------resourceCapability : " + resourceCapability);
+
     this.dataLocalHosts = resolveHosts(dataLocalHosts);
     RackResolver.init(conf);
     this.dataLocalRacks = new HashSet<String>(); 

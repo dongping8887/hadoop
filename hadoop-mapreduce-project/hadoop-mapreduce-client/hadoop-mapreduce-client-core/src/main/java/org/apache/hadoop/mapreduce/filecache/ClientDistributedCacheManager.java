@@ -17,11 +17,8 @@
  */
 package org.apache.hadoop.mapreduce.filecache;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
@@ -33,12 +30,17 @@ import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mapreduce.security.TokenCache;
 import org.apache.hadoop.security.Credentials;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Manages internal configuration of the cache by the client for job submission.
  */
 @InterfaceAudience.Private
 public class ClientDistributedCacheManager {
-
+  protected static final Log LOG = LogFactory.getLog(ClientDistributedCacheManager.class);
   /**
    * Determines timestamps of files to be cached, and stores those
    * in the configuration. Determines the visibilities of the distributed cache
@@ -87,8 +89,13 @@ public class ClientDistributedCacheManager {
       job.set(MRJobConfig.CACHE_ARCHIVES_SIZES, archiveFileSizes.toString());
       setArchiveTimestamps(job, archiveTimestamps.toString());
     }
-  
+
     URI[] tfiles = DistributedCache.getCacheFiles(job);
+
+    for (int i = 1; i < tfiles.length; i++) {
+      LOG.info("---------cacheFile: " + tfiles[i]);
+    }
+
     if (tfiles != null) {
       FileStatus status = getFileStatus(job, tfiles[0], statCache);
       StringBuilder fileSizes =

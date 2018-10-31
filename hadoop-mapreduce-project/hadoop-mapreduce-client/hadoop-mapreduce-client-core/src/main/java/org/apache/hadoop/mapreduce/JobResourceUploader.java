@@ -17,13 +17,6 @@
  */
 package org.apache.hadoop.mapreduce;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.classification.InterfaceAudience;
@@ -35,6 +28,13 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.mapreduce.filecache.ClientDistributedCacheManager;
 import org.apache.hadoop.mapreduce.filecache.DistributedCache;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 
 @InterfaceAudience.Private
 @InterfaceStability.Unstable
@@ -293,7 +293,7 @@ class JobResourceUploader {
     }
 
     Path fileDir = JobSubmissionFiles.getJobLog4jFile(submitJobDir);
-
+    LOG.info("----fileDir: " + fileDir + ", submitJobDir: " + submitJobDir + ", file: " + file);
     // first copy local log4j.properties file to HDFS under submitJobDir
     if (file != null) {
       FileSystem.mkdirs(jtFs, fileDir, mapredSysPerms);
@@ -305,6 +305,7 @@ class JobResourceUploader {
       }
       Path tmp = new Path(tmpURI);
       Path newPath = copyRemoteFiles(fileDir, tmp, conf, replication);
+      LOG.info("----tmpURI: " + tmpURI + ", tmp: " + tmp + ", replication: " + replication + ", newPath: " + newPath);
       DistributedCache.addFileToClassPath(new Path(newPath.toUri().getPath()),
           conf);
     }

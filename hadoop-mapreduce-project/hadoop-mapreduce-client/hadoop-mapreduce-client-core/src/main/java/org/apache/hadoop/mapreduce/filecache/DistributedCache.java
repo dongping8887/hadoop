@@ -18,19 +18,22 @@
 
 package org.apache.hadoop.mapreduce.filecache;
 
-import java.io.*;
-import java.util.*;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.classification.InterfaceAudience;
-import org.apache.hadoop.conf.*;
-import org.apache.hadoop.util.*;
-import org.apache.hadoop.fs.*;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.MRJobConfig;
+import org.apache.hadoop.util.StringUtils;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Distribute application-specific large, read-only files efficiently.
@@ -132,7 +135,7 @@ import java.net.URI;
 @Deprecated
 @InterfaceAudience.Private
 public class DistributedCache {
-  
+  protected static final Log LOG = LogFactory.getLog(DistributedCache.class);
   /**
    * Set the configuration with the given set of archives.  Intended
    * to be used by user code.
@@ -315,6 +318,7 @@ public class DistributedCache {
     conf.set(MRJobConfig.CLASSPATH_FILES, classpath == null ? file.toString()
              : classpath + "," + file.toString());
     URI uri = fs.makeQualified(file).toUri();
+    LOG.info("----file: " + file + ", fs: " + fs + ", classpath: " + classpath + ", uri: " + uri);
     addCacheFile(uri, conf);
   }
 
