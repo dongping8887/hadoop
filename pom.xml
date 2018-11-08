@@ -35,20 +35,30 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   </dependencyManagement>
 
   <distributionManagement>
-    <repository>
-      <id>${distMgmtStagingId}</id>
-      <name>${distMgmtStagingName}</name>
-      <url>${distMgmtStagingUrl}</url>
-    </repository>
-    <snapshotRepository>
-      <id>${distMgmtSnapshotsId}</id>
-      <name>${distMgmtSnapshotsName}</name>
-      <url>${distMgmtSnapshotsUrl}</url>
-    </snapshotRepository>
-    <site>
-      <id>apache.website</id>
-      <url>scpexe://people.apache.org/www/hadoop.apache.org/docs/r${project.version}</url>
-    </site>
+{#    <repository>#}
+{#      <id>${distMgmtStagingId}</id>#}
+{#      <name>${distMgmtStagingName}</name>#}
+{#      <url>${distMgmtStagingUrl}</url>#}
+{#    </repository>#}
+{#    <snapshotRepository>#}
+{#      <id>${distMgmtSnapshotsId}</id>#}
+{#      <name>${distMgmtSnapshotsName}</name>#}
+{#      <url>${distMgmtSnapshotsUrl}</url>#}
+{#    </snapshotRepository>#}
+{#    <site>#}
+{#      <id>apache.website</id>#}
+{#      <url>scpexe://people.apache.org/www/hadoop.apache.org/docs/r${project.version}</url>#}
+{#    </site>#}
+      <repository>
+          <id>nexus-releases</id>
+          <name>nexus releases</name>
+          <url>http://192.168.100.110:8081/repository/maven-releases/</url>
+      </repository>
+      <snapshotRepository>
+          <id>nexus-snapshots</id>
+          <name>nexus snapshots</name>
+          <url>http://192.168.100.110:8081/repository/maven-snapshots/</url>
+      </snapshotRepository>
   </distributionManagement>
 
   <repositories>
