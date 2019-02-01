@@ -284,6 +284,10 @@ public abstract class DelegationTokenAuthenticator implements Authenticator {
       separator = "&";
     }
     url = new URL(sb.toString());
+    LOG.debug("url: " + url);
+    LOG.debug("hasResponse: " + hasResponse);
+    LOG.debug("doAsUser: " + doAsUser);
+
     AuthenticatedURL aUrl = new AuthenticatedURL(this, connConfigurator);
     HttpURLConnection conn = aUrl.openConnection(url, token);
     conn.setRequestMethod(operation.getHttpMethod());
