@@ -630,6 +630,7 @@ public class UserGroupInformation {
   static UserGroupInformation getCurrentUser() throws IOException {
     AccessControlContext context = AccessController.getContext();
     Subject subject = Subject.getSubject(context);
+    LOG.debug("subject get from AccessControlContext: " + subject);
     if (subject == null || subject.getPrincipals(User.class).isEmpty()) {
       return getLoginUser();
     } else {
@@ -1331,6 +1332,7 @@ public class UserGroupInformation {
   @InterfaceAudience.Public
   @InterfaceStability.Evolving
   public UserGroupInformation getRealUser() {
+    LOG.debug("realUser principals size in subject: " + subject.getPrincipals(RealUser.class).size());
     for (RealUser p: subject.getPrincipals(RealUser.class)) {
       return p.getRealUser();
     }
