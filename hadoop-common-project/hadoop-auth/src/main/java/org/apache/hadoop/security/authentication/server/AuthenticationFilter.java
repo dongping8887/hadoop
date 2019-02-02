@@ -206,7 +206,7 @@ public class AuthenticationFilter implements Filter {
     String authHandlerClassName;
     if (authHandlerName == null) {
       throw new ServletException("Authentication type must be specified: " +
-          PseudoAuthenticationHandler.TYPE + "|" + 
+          PseudoAuthenticationHandler.TYPE + "|" +
           KerberosAuthenticationHandler.TYPE + "|<class>");
     }
     if (authHandlerName.toLowerCase(Locale.ENGLISH).equals(
@@ -510,6 +510,13 @@ public class AuthenticationFilter implements Filter {
         authenticationEx = ex;
         token = null;
       }
+      //add by dongping 20190202 begin
+      LOG.debug("token: " + token);
+      if (token != null) {
+        LOG.debug("token name: " + token.getName() + ", userName: " + token.getUserName()
+                + ", type: " + token.getType() + ", expires: " + token.getExpires());
+      }
+      //add by dongping 20190202 end
       if (authHandler.managementOperation(token, httpRequest, httpResponse)) {
         if (token == null) {
           if (LOG.isDebugEnabled()) {

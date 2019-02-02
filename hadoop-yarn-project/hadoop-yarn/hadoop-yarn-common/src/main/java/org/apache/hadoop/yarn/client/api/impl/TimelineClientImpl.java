@@ -242,9 +242,11 @@ public class TimelineClientImpl extends TimelineClient {
 
   protected void serviceInit(Configuration conf) throws Exception {
     UserGroupInformation ugi = UserGroupInformation.getCurrentUser();
-    LOG.debug("currentUser: " + ugi);
     UserGroupInformation realUgi = ugi.getRealUser();
+    //add by dongping 20190202 begin
+    LOG.debug("currentUser: " + ugi);
     LOG.debug("realUser: " + realUgi);
+    //add by dongping 20190202 end
     if (realUgi != null) {
       authUgi = realUgi;
       doAsUser = ugi.getShortUserName();
