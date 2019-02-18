@@ -17,21 +17,7 @@
  */
 package org.apache.hadoop.security.token.delegation.web;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.MediaType;
-
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
@@ -49,8 +35,17 @@ import org.apache.hadoop.security.token.delegation.AbstractDelegationTokenSecret
 import org.apache.hadoop.util.HttpExceptionUtils;
 import org.apache.hadoop.util.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.annotations.VisibleForTesting;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.io.Writer;
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * An {@link AuthenticationHandler} that implements Kerberos SPNEGO mechanism
@@ -77,6 +72,7 @@ import com.google.common.annotations.VisibleForTesting;
 @InterfaceStability.Evolving
 public abstract class DelegationTokenAuthenticationHandler
     implements AuthenticationHandler {
+  private static Logger LOG = LoggerFactory.getLogger(DelegationTokenAuthenticationHandler.class);
 
   protected static final String TYPE_POSTFIX = "-dt";
 
@@ -170,6 +166,11 @@ public abstract class DelegationTokenAuthenticationHandler
     boolean requestContinues = true;
     String op = ServletUtils.getParameter(request,
         KerberosDelegationTokenAuthenticator.OP_PARAM);
+    //add by dongping 20190218 begin
+    LOG.debug("token: " + token);
+    LOG.debug("http method: " + request.getMethod());
+    //add by dongping 20190218 end
+
     op = (op != null) ? StringUtils.toUpperCase(op) : null;
     if (DELEGATION_TOKEN_OPS.contains(op) &&
         !request.getMethod().equals("OPTIONS")) {
@@ -190,11 +191,13 @@ public abstract class DelegationTokenAuthenticationHandler
           doManagement = true;
         }
         if (doManagement) {
+          LOG.debug("token: " + token);
           UserGroupInformation requestUgi = (token != null)
               ? UserGroupInformation.createRemoteUser(token.getUserName())
               : null;
           // Create the proxy user if doAsUser exists
           String doAsUser = DelegationTokenAuthenticationFilter.getDoAs(request);
+          LOG.debug("doAsUser: " + doAsUser);
           if (requestUgi != null && doAsUser != null) {
             requestUgi = UserGroupInformation.createProxyUser(
                 doAsUser, requestUgi);
@@ -292,6 +295,9 @@ public abstract class DelegationTokenAuthenticationHandler
         requestContinues = false;
       }
     }
+    //add by dongping 20190218 begin
+    LOG.debug("response content type: " + response.getContentType());
+    //add by dongping 20190218 end
     return requestContinues;
   }
 
@@ -327,12 +333,21 @@ public abstract class DelegationTokenAuthenticationHandler
       throws IOException, AuthenticationException {
     AuthenticationToken token;
     String delegationParam = getDelegationToken(request);
+    //add by dongping 20190218 begin
+    LOG.debug("delegationParam: " + delegationParam);
+    //add by dongping 20190218 end
     if (delegationParam != null) {
       try {
         Token<AbstractDelegationTokenIdentifier> dt = new Token();
         dt.decodeFromUrlString(delegationParam);
         UserGroupInformation ugi = tokenManager.verifyToken(dt);
         final String shortName = ugi.getShortUserName();
+        //add by dongping 20190218 begin
+        LOG.debug("ugi: " + ugi);
+        LOG.debug("shortName: " + shortName);
+        LOG.debug("userName: " + ugi.getUserName());
+        LOG.debug("authType: " + authType);
+        //add by dongping 20190218 end
 
         // creating a ephemeral token
         token = new AuthenticationToken(shortName, ugi.getUserName(),
@@ -345,8 +360,12 @@ public abstract class DelegationTokenAuthenticationHandler
             HttpServletResponse.SC_FORBIDDEN, new AuthenticationException(ex));
       }
     } else {
+      LOG.debug("authHandler: " + authHandler);
       token = authHandler.authenticate(request, response);
     }
+    //add by dongping 20190218 begin
+    LOG.debug("token: " + token);
+    //add by dongping 20190218 end
     return token;
   }
 

@@ -452,9 +452,17 @@ public class AuthenticationFilter implements Filter {
   protected AuthenticationToken getToken(HttpServletRequest request) throws IOException, AuthenticationException {
     AuthenticationToken token = null;
     String tokenStr = null;
+    //add by dongping 20190218 begin
+    LOG.debug("url: " + request.getRequestURL());
+    LOG.debug("parameter map: " + request.getParameterMap());
+    //add by dongping 20190218 end
     Cookie[] cookies = request.getCookies();
     if (cookies != null) {
       for (Cookie cookie : cookies) {
+        //add by dongping 20190218 begin
+        LOG.debug("cookie: " + cookie);
+        LOG.debug("cookie: " + cookie.getName()+", "+cookie.getValue());
+        //add by dongping 20190218 end
         if (cookie.getName().equals(AuthenticatedURL.AUTH_COOKIE)) {
           tokenStr = cookie.getValue();
           try {
@@ -466,8 +474,16 @@ public class AuthenticationFilter implements Filter {
         }
       }
     }
+    //add by dongping 20190218 begin
+    LOG.debug("tokenStr: " + tokenStr);
+    //add by dongping 20190218 end
     if (tokenStr != null) {
       token = AuthenticationToken.parse(tokenStr);
+      //add by dongping 20190218 begin
+      LOG.debug("token: " + token);
+      LOG.debug("token.getType: " + token.getType());
+      LOG.debug("authHandler.getType(): " + authHandler.getType());
+      //add by dongping 20190218 end
       if (!token.getType().equals(authHandler.getType())) {
         throw new AuthenticationException("Invalid AuthenticationToken type");
       }
@@ -510,13 +526,9 @@ public class AuthenticationFilter implements Filter {
         authenticationEx = ex;
         token = null;
       }
-      //add by dongping 20190202 begin
+      //add by dongping 20190218 begin
       LOG.debug("token: " + token);
-      if (token != null) {
-        LOG.debug("token name: " + token.getName() + ", userName: " + token.getUserName()
-                + ", type: " + token.getType() + ", expires: " + token.getExpires());
-      }
-      //add by dongping 20190202 end
+      //add by dongping 20190218 end
       if (authHandler.managementOperation(token, httpRequest, httpResponse)) {
         if (token == null) {
           if (LOG.isDebugEnabled()) {

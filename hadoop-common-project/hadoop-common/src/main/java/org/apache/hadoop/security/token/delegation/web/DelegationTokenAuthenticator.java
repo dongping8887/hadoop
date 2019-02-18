@@ -21,10 +21,7 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.security.SecurityUtil;
 import org.apache.hadoop.security.UserGroupInformation;
-import org.apache.hadoop.security.authentication.client.AuthenticatedURL;
-import org.apache.hadoop.security.authentication.client.AuthenticationException;
-import org.apache.hadoop.security.authentication.client.Authenticator;
-import org.apache.hadoop.security.authentication.client.ConnectionConfigurator;
+import org.apache.hadoop.security.authentication.client.*;
 import org.apache.hadoop.security.token.Token;
 import org.apache.hadoop.security.token.delegation.AbstractDelegationTokenIdentifier;
 import org.apache.hadoop.util.HttpExceptionUtils;
@@ -270,6 +267,12 @@ public abstract class DelegationTokenAuthenticator implements Authenticator {
     if (dToken != null) {
       params.put(TOKEN_PARAM, dToken.encodeToUrlString());
     }
+    //add by dongping 20190218 begin 避免一些因为空用户导致的问题
+    if (org.apache.commons.lang.StringUtils.isEmpty(doAsUser)){
+      doAsUser="hadoop";
+      params.put(PseudoAuthenticator.USER_NAME, doAsUser);
+    }
+    //add by dongping 20190218 end
     // proxyuser
     if (doAsUser != null) {
       params.put(DelegationTokenAuthenticatedURL.DO_AS,
@@ -287,6 +290,8 @@ public abstract class DelegationTokenAuthenticator implements Authenticator {
     LOG.debug("url: " + url);
     LOG.debug("hasResponse: " + hasResponse);
     LOG.debug("doAsUser: " + doAsUser);
+    LOG.debug("token: " + token);
+    LOG.debug("http method: " + operation.getHttpMethod());
 
     AuthenticatedURL aUrl = new AuthenticatedURL(this, connConfigurator);
     HttpURLConnection conn = aUrl.openConnection(url, token);
@@ -294,6 +299,7 @@ public abstract class DelegationTokenAuthenticator implements Authenticator {
     HttpExceptionUtils.validateResponse(conn, HttpURLConnection.HTTP_OK);
     if (hasResponse) {
       String contentType = conn.getHeaderField(CONTENT_TYPE);
+      LOG.debug("contentType: " + contentType);
       contentType = (contentType != null) ? StringUtils.toLowerCase(contentType)
                                           : null;
       if (contentType != null &&
