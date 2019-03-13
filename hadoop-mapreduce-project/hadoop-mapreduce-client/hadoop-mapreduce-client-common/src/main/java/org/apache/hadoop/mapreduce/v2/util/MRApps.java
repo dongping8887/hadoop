@@ -671,6 +671,10 @@ public class MRApps extends Apps {
       //modify by dongping 20190313 end
     }
 
+    //add by dongping 20190313 begin
+    vargs.add("-Dlog4j.debug");
+    //add by dongping 20190313 end
+
     long logSize;
     String logLevel;
     int numBackups;
