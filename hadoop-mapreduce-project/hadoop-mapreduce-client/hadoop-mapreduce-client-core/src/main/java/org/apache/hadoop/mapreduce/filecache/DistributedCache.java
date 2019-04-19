@@ -318,7 +318,7 @@ public class DistributedCache {
     conf.set(MRJobConfig.CLASSPATH_FILES, classpath == null ? file.toString()
              : classpath + "," + file.toString());
     URI uri = fs.makeQualified(file).toUri();
-    LOG.info("----file: " + file + ", fs: " + fs + ", classpath: " + classpath + ", uri: " + uri);
+    LOG.debug("----file: " + file + ", fs: " + fs + ", classpath: " + classpath + ", uri: " + uri);
     addCacheFile(uri, conf);
   }
 

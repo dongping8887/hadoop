@@ -293,7 +293,7 @@ class JobResourceUploader {
     }
 
     Path fileDir = JobSubmissionFiles.getJobLog4jFile(submitJobDir);
-    LOG.info("----fileDir: " + fileDir + ", submitJobDir: " + submitJobDir + ", file: " + file);
+    LOG.debug("----fileDir: " + fileDir + ", submitJobDir: " + submitJobDir + ", file: " + file);
     // first copy local log4j.properties file to HDFS under submitJobDir
     if (file != null) {
       FileSystem.mkdirs(jtFs, fileDir, mapredSysPerms);
@@ -305,7 +305,7 @@ class JobResourceUploader {
       }
       Path tmp = new Path(tmpURI);
       Path newPath = copyRemoteFiles(fileDir, tmp, conf, replication);
-      LOG.info("----tmpURI: " + tmpURI + ", tmp: " + tmp + ", replication: " + replication + ", newPath: " + newPath);
+      LOG.debug("----tmpURI: " + tmpURI + ", tmp: " + tmp + ", replication: " + replication + ", newPath: " + newPath);
       DistributedCache.addFileToClassPath(new Path(newPath.toUri().getPath()),
           conf);
     }

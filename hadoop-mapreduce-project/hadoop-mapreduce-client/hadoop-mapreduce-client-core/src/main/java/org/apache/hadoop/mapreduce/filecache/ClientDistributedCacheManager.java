@@ -93,7 +93,7 @@ public class ClientDistributedCacheManager {
     URI[] tfiles = DistributedCache.getCacheFiles(job);
 
     for (int i = 1; i < tfiles.length; i++) {
-      LOG.info("---------cacheFile: " + tfiles[i]);
+      LOG.debug("---------cacheFile: " + tfiles[i]);
     }
 
     if (tfiles != null) {
