@@ -566,8 +566,8 @@
                   <goal>javah</goal>
                 </goals>
                 <configuration>
-                  <!--<javahPath>${env.JAVA_HOME}/bin/javah</javahPath>-->   <!-- modify by dongping -->
-                  <javahPath>${java.home}/bin/javah</javahPath>
+                  <javahPath>${env.JAVA_HOME}/bin/javah</javahPath>
+<!--                  <javahPath>${java.home}/bin/javah</javahPath>-->
                   <javahClassNames>
                     <javahClassName>org.apache.hadoop.io.compress.zlib.ZlibCompressor</javahClassName>
                     <javahClassName>org.apache.hadoop.io.compress.zlib.ZlibDecompressor</javahClassName>
